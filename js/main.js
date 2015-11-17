@@ -61,7 +61,7 @@ pipeline_badge_template = Handlebars.compile( $("#pipeline-badge-template").html
 $.ajax({
   dataType: "json",
   url: url,
-  timeout: 2000
+  timeout: 10000
 }).done(function( data ) {
   if ( groups !== undefined && groups !== null ) {
     $.each( groups, function(i , group) {
