@@ -20,7 +20,7 @@ function buildGroup(group) {
       stage_status_classes: stage_state_classes,
       badge_class: BUILD_STATE_CLASSES[pipeline._embedded.instances[0]._embedded.stages[0].status] || 'build-none'
     }
-    if ( !pipeline.pause_info.is_paused || !config.hide_paused_pipelines ) {
+    if ( !pipeline.pause_info.paused || !config.hide_paused_pipelines ) {
       $( "#pipeline-group-" + group.name ).append( pipeline_badge_template( pipeline_details ))
     }
   });
