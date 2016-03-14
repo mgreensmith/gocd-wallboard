@@ -2,7 +2,9 @@ BUILD_STATE_CLASSES = {
   'Passed': 'build-passed',
   'Building': 'build-building',
   'Failed': 'build-failed'
-  }
+};
+
+DEFAULT_FONT_SIZE = '30px';
 
 function buildGroup(group) {
   $( "#pipeline-groups" ).append( pipeline_group_template( { name: group.name } ))
@@ -20,7 +22,7 @@ function buildGroup(group) {
       stage_status_classes: stage_state_classes,
       badge_class: BUILD_STATE_CLASSES[pipeline._embedded.instances[0]._embedded.stages[0].status] || 'build-none'
     }
-    if ( !pipeline.pause_info.paused || !config.hide_paused_pipelines ) {
+    if ( !pipeline.pause_info.paused || !final_config.hide_paused_pipelines ) {
       $( "#pipeline-group-" + group.name ).append( pipeline_badge_template( pipeline_details ))
     }
   });
@@ -37,26 +39,53 @@ function queryParse(querystring) {
   return result;
 }
 
+function mergeConfig(query) {
+  server = query.server ? _.trim(query.server, '/' ) : _.trim(config.server, '/' );
+
+  if ( query.pipeline_groups ) {
+    pipeline_groups =  _.trim(query.pipeline_groups, '/' )
+  } else {
+    pipeline_groups = config.pipeline_groups ? config.pipeline_groups : null
+  }
+
+  hide_paused_pipelines = query.hide_paused_pipelines ? query.hide_paused_pipelines : config.hide_paused_pipelines
+
+  requested_font_size = query.font_size ? query.font_size : config.font_size ? config.font_size : DEFAULT_FONT_SIZE
+
+  return {
+    server: server,
+    pipeline_groups: pipeline_groups,
+    hide_paused_pipelines: hide_paused_pipelines,
+    font_size: requested_font_size
+  }
+}
+
 function showError( html ) {
   $( '#error-text' ).append( html + '<br>');
   $( '#error-panel' ).show();
 }
 
+
+// Main execution
+
 query = queryParse( window.location.search );
+final_config = mergeConfig(query);
 
-server = query.server ? _.trim(query.server, '/' ) : _.trim(config.server, '/' );
-url = server + "/go/api/dashboard"
+console.log(final_config);
 
-if ( query.pipeline_groups ) {
-  pipeline_groups =  _.trim(query.pipeline_groups, '/' )
-} else {
-  pipeline_groups = config.pipeline_groups ? config.pipeline_groups : null
-}
+// Override global text size from config
+// http://stackoverflow.com/questions/566203/changing-css-values-with-javascript
+var cssRuleCode = document.all ? 'rules' : 'cssRules'; //account for IE and FF
+// these indices may change if we add a new stylesheet or new rules to the existing CSS
+var text_size_rule = document.styleSheets[2][cssRuleCode][1];
+text_size_rule.style.fontSize = final_config.font_size;
 
-groups = pipeline_groups !== null ? pipeline_groups.split(',') : null
+groups = final_config.pipeline_groups !== null ? final_config.pipeline_groups.split(',') : null
 
 pipeline_group_template = Handlebars.compile( $("#pipeline-group-template").html() );
 pipeline_badge_template = Handlebars.compile( $("#pipeline-badge-template").html() );
+
+url = final_config.server + "/go/api/dashboard"
 
 $.ajax({
   dataType: "json",
