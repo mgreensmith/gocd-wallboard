@@ -3,8 +3,8 @@ BUILD_STATE_CLASSES = {
   'Building': 'build-building',
   'Failed': 'build-failed'
 };
-
 DEFAULT_FONT_SIZE = '30px';
+RELOAD_INTERVAL_MS = 10000
 
 function buildGroup(group) {
   $( "#pipeline-groups" ).append( pipeline_group_template( { name: group.name } ))
@@ -53,15 +53,12 @@ function queryParse(querystring) {
 
 function mergeConfig(query) {
   server = query.server ? _.trim(query.server, '/' ) : _.trim(config.server, '/' );
-
   if ( query.pipeline_groups ) {
     pipeline_groups =  _.trim(query.pipeline_groups, '/' )
   } else {
     pipeline_groups = config.pipeline_groups ? config.pipeline_groups : null
   }
-
   hide_paused_pipelines = query.hide_paused_pipelines ? query.hide_paused_pipelines : config.hide_paused_pipelines
-
   requested_font_size = query.font_size ? query.font_size : config.font_size ? config.font_size : DEFAULT_FONT_SIZE
 
   return {
@@ -73,7 +70,7 @@ function mergeConfig(query) {
 }
 
 function showError( html ) {
-  $( '#error-text' ).append( html + '<br>');
+  $( '#error-text' ).html( html + '<br>');
   $( '#error-panel' ).show();
 }
 
@@ -81,11 +78,12 @@ function populateData( reloading ) {
   $.ajax({
     dataType: "json",
     url: url,
-    timeout: 5000,
+    timeout: RELOAD_INTERVAL_MS,
     headers: {
       Accept : "application/vnd.go.cd.v1+json"
     }
   }).done(function( data ) {
+    $( '#error-panel' ).hide();
     if ( groups !== undefined && groups !== null ) {
       $.each( groups, function(i , group) {
         group_object = _.find(data._embedded.pipeline_groups, { 'name': group } )
@@ -138,5 +136,5 @@ $(document).ready(function(){
   url = final_config.server + "/go/api/dashboard"
 
   populateData( false );
-  setInterval(function() {populateData( true ); }, 5000);
+  setInterval(function() {populateData( true ); }, RELOAD_INTERVAL_MS);
 });
