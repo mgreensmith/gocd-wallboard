@@ -6,6 +6,8 @@ This is a very minimal visualizer for [GoCD](http://go.cd) pipeline status. It c
 
 ### Usage
 
+Requires GoCD `>= 15.3`, use the `pre-15.3` branch for older server versions.
+
 1. Modify `js/config.js` as necessary.
 2. Serve this directory with the webserver of your choice.
 
@@ -16,6 +18,7 @@ Default configuration values are sourced from `js/config.js`.
 - `server`: URL to your GoCD server.
 - `pipeline_groups`: [optional] comma-separated list of pipeline groups to display. Default: display all pipeline groups.
 - `hide_paused_pipelines`: [optional] whether to hide paused pipelines from the wallboard display. Default: false (display paused pipelines).
+- `font_size`: [optional, default:30px] font size for all text
 
 Configuration values can be overriden at run time via URL query parameters, e.g. `http://gocd-wallboard/?server=http://my.gocdserver.com&pipeline_groups=somegroup,someothergroup`
 
