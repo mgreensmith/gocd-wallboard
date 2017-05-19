@@ -4,6 +4,7 @@ BUILD_STATE_CLASSES = {
   'Failed': 'build-failed'
 };
 DEFAULT_FONT_SIZE = '30px';
+DEFAULT_COLUMNS = 2;
 RELOAD_INTERVAL_MS = 10000
 
 function buildGroup(group) {
@@ -11,7 +12,7 @@ function buildGroup(group) {
 
   $.each( group._embedded.pipelines, function(i , pipeline) {
     if ( !pipeline.pause_info.paused || !final_config.hide_paused_pipelines ) {
-      $( "#pipeline-group-" + group.name ).append( '<li class="col-md-6" id="'+ pipeline.name + '">' + pipeline_badge_template( pipelineDetails( pipeline )) + '</li>' )
+      $( "#pipeline-group-" + group.name ).append( '<div id="'+ pipeline.name + '">' + pipeline_badge_template( pipelineDetails( pipeline )) + '</div>' )
     }
   });
 }
@@ -60,12 +61,14 @@ function mergeConfig(query) {
   }
   hide_paused_pipelines = query.hide_paused_pipelines ? query.hide_paused_pipelines : config.hide_paused_pipelines
   requested_font_size = query.font_size ? query.font_size : config.font_size ? config.font_size : DEFAULT_FONT_SIZE
+  requested_columns = query.columns ? query.columns : config.columns ? config.columns : DEFAULT_COLUMNS
 
   return {
     server: server,
     pipeline_groups: pipeline_groups,
     hide_paused_pipelines: hide_paused_pipelines,
-    font_size: requested_font_size
+    font_size: requested_font_size,
+    columns: requested_columns
   }
 }
 
@@ -127,6 +130,9 @@ $(document).ready(function(){
   // these indices may change if we add a new stylesheet or new rules to the existing CSS
   var text_size_rule = document.styleSheets[2][cssRuleCode][1];
   text_size_rule.style.fontSize = final_config.font_size;
+
+  var column_rule = document.styleSheets[2][cssRuleCode][2];
+  column_rule.style.columnCount = final_config.columns;
 
   groups = final_config.pipeline_groups !== null ? final_config.pipeline_groups.split(',') : null
 

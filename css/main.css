@@ -10,16 +10,19 @@ h2, a, a:link, a:hover, a:visited, a:active, a:focus, span {
   text-decoration: none;
 }
 
-.pipeline-badge {
-  margin: 1px;
-  padding: 0px;
-  border-radius: 5px;
-  white-space: nowrap;
-  text-align: center;
+.masonry {
+    column-count: 2;
+    column-gap: 0.3em;
 }
 
-.iblock {
+.pipeline-badge {
   display: inline-block;
+  width: 99%;
+  margin: 3px;
+  padding: 3px;
+  border-radius: 5px;
+  white-space: wrap;
+  text-align: center;
 }
 
 .dot {

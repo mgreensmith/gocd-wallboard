@@ -19,6 +19,7 @@ Default configuration values are sourced from `js/config.js`.
 - `pipeline_groups`: [optional] comma-separated list of pipeline groups to display. Default: display all pipeline groups.
 - `hide_paused_pipelines`: [optional] whether to hide paused pipelines from the wallboard display. Default: false (display paused pipelines).
 - `font_size`: [optional, default:30px] font size for all text
+- `columns`: [optional, default:2] number of columns of pipeline badges
 
 Configuration values can be overriden at run time via URL query parameters, e.g. `http://gocd-wallboard/?server=http://my.gocdserver.com&pipeline_groups=somegroup,someothergroup`
 
